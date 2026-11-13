@@ -1,0 +1,47 @@
+/* OLED wallpaper: very dark, nothing bright except the logo and digits */
+* { margin: 0; box-sizing: border-box; }
+html, body, #app { height: 100%; }
+body {
+  overflow: hidden; color: #d0d0d0; font-family: Unbounded, system-ui, sans-serif;
+  /* night sky with a faint sunset glow rising from the bottom edge */
+  background:
+    radial-gradient(ellipse 60% 38% at 50% 108%, rgba(240, 130, 60, .2), transparent 70%),
+    radial-gradient(ellipse 95% 62% at 50% 104%, rgba(240, 70, 156, .16), transparent 70%),
+    radial-gradient(ellipse at 50% 42%, #1e1336 0%, #0e0918 55%, #07050c 100%);
+}
+
+.hud {
+  --w: min(80vw, 42vh); /* logo and clock share one width, so they read as one lockup */
+  height: 100%; padding: 16px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: calc(var(--w) * .1); text-align: center;
+  /* slow few-pixel drift so no pixel stays lit in one spot (burn-in) */
+  animation: drift 600s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  0% { transform: translate(-6px, -4px); }
+  50% { transform: translate(5px, 6px); }
+  100% { transform: translate(6px, -5px); }
+}
+
+.logo { width: var(--w); height: auto; filter: brightness(.9) drop-shadow(0 0 calc(var(--w) * .12) rgba(150, 70, 220, .35)); }
+
+/* clock: 4 units of 1.52em + 3 gaps of .64em = 8em = logo width */
+.clock { display: flex; gap: .64em; font-size: calc(var(--w) / 8); }
+.unit { position: relative; display: flex; flex-direction: column; align-items: center; gap: .2em; width: 1.52em; }
+.num { display: flex; justify-content: center; filter: drop-shadow(0 0 .22em rgba(240, 70, 156, .28)); }
+.digit, .out {
+  font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums;
+  background: linear-gradient(#4a72ee 8%, #a550d6 38%, #f24a9e 62%, #f5a040 96%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.digit { display: inline-block; animation: tick .5s cubic-bezier(.2, .9, .25, 1); }
+@keyframes tick { from { transform: translateY(-.4em); opacity: 0; } }
+.unit + .unit::before {
+  content: ":"; position: absolute; top: -.06em; left: -.32em; transform: translateX(-50%);
+  font-weight: 300; line-height: 1; color: #4b3a6e;
+}
+.out { font-size: calc(var(--w) / 8); text-transform: uppercase; letter-spacing: .12em; }
+.label { font-size: max(.13em, .5rem); font-weight: 400; letter-spacing: .4em; margin-right: -.4em; text-transform: uppercase; color: #7a68a6; }
+
+@media (prefers-reduced-motion: reduce) { .digit { animation: none; } }
